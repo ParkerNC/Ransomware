@@ -63,7 +63,7 @@ class Server():
 
 if __name__ == "__main__":
 
-    s = Server("127.0.0.1", 6677)
+    s = Server("127.0.0.1", 5789)
     s.start()
     
     sys.exit()
