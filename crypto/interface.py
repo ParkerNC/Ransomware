@@ -1,5 +1,6 @@
 import tkinter
 from tkinter.ttk import *
+from tkinter import Tk
 import threading
 
 class App(threading.Thread):
@@ -14,7 +15,7 @@ class App(threading.Thread):
     def pop_up_win(self):
         def get_input():
             global payment
-            payment = inputtxt.get(1.0, END)
+            #payment = inputtxt.get(1.0, END)
 
         self.root = Tk()
         self.root.protocol("WM_DELETE_WINDOW", self.callback)
