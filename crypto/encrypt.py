@@ -52,7 +52,7 @@ def decrypt(file, key):
 
 def encryptFiles(key):
     exclude = ['.py','.pem', '.exe', '.imin']
-    for item in recursiveScan(os.getcwd() + '\Test'): 
+    for item in recursiveScan(os.path.join(os.getcwd(), 'Test')): 
         filePath = Path(item)
         extension = filePath.suffix.lower()
 
@@ -62,7 +62,7 @@ def encryptFiles(key):
         print('Encrypted ' + str(filePath))
 
 def decryptFiles(key):
-    for item in recursiveScan(os.getcwd() + '\Test'): 
+    for item in recursiveScan(os.path.join(os.getcwd(), 'Test')): 
         filePath = Path(item)
         extension = filePath.suffix.lower()
 
