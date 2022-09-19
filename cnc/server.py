@@ -69,14 +69,7 @@ class Server():
                 (conn, (self.host, self.port)) = self.ss.accept()
                 new_thread = ClientThread(self.host, self.port, conn, self.thread_check)
                 new_thread.start()
-
-                if new_thread.id == None:
-                    print("bad")
-                    continue
                 
-                userId = new_thread.id.decode("Utf-8")
-                print(userId)
-                self.thread_check(new_thread)
                 self.threads[new_thread.id] = new_thread
 
     def inputThread(self) -> str:
