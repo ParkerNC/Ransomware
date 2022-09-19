@@ -41,8 +41,6 @@ class Server():
         self.host = host
         self.port = port
         self.threads = []
-
-
     def keyGen(self, id: str) -> bytes:
         key = Fernet.generate_key()
         with open(os.path.join("Users", id), 'wb') as gotUser:
