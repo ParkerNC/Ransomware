@@ -28,7 +28,17 @@ class ClientThread(Thread):
             if not data: break
             
             print(f"recieved user connectinon: {data}")
-            self.conn.send(b"XD")
+
+            key1 = Fernet.generate_key()
+
+            self.conn.send(key1)
+
+            x = input()
+            if x == 'send':
+                self.conn.send(b'XD')
+
+
+            
 
 
 
@@ -42,12 +52,10 @@ class Server():
         self.port = port
         self.threads = []
 
-
     def keyGen(self, id: str) -> bytes:
         key = Fernet.generate_key()
         with open(os.path.join("Users", id), 'wb') as gotUser:
             gotUser.write(key)
-
         return key
 
     
