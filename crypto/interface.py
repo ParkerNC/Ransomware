@@ -2,6 +2,8 @@ from tkinter import *
 import tkinter
 from tkinter.ttk import *
 
+import encrypt
+
 payment = ""
 def pop_up_win():
     def get_input():
