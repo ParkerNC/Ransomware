@@ -84,7 +84,7 @@ class Server():
             cmd = self.inp.split(' ')[0]
             user = self.inp.split(' ')[1]
             if cmd == "decrypt":
-                with open(user, 'r') as userfile:
+                with open(os.path.join('Users', user), 'r') as userfile:
                     key = userfile.readline()
                     print(key)
                     self.sig_dec(key, self.threads[user])
