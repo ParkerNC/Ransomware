@@ -1,4 +1,3 @@
-from tkinter import *
 import tkinter
 from tkinter.ttk import *
 import threading

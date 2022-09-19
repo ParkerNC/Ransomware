@@ -10,12 +10,13 @@ import os
 
 class ClientThread(Thread):
 
-    def __init__(self, host: str, port: int, conn: socket) -> None:
+    def __init__(self, host: str, port: int, conn: socket, tu) -> None:
         Thread.__init__(self)
         self.host = host
         self.port = port
         self.conn = conn
         self.id = None
+        self.thread_update = tu
 
     def run(self) -> None:
         while True:
@@ -28,6 +29,8 @@ class ClientThread(Thread):
             if not data: break
             
             print(f"recieved user connectinon: {data}")
+            
+            self.thread_update(self, data.decode("Utf-8"))
 
 
 class Server():
@@ -48,8 +51,8 @@ class Server():
             gotUser.write(key)
         return key
 
-    def thread_check(self, new_thread: ClientThread) -> None:
-        print(new_thread.id)
+    def thread_check(self, new_thread: ClientThread, userId: str) -> None:
+        print(userId)
         print(self.Users)
         for t in self.Users:
             print(t)
@@ -57,14 +60,14 @@ class Server():
                 new_thread.conn.send(b"wait")
                 return
         
-        new_thread.conn.send(self.keyGen(new_thread.id))
+        new_thread.conn.send(self.keyGen(userId))
     
     def start(self) -> None:
         r_socks, w_socks, e_socks = select.select([self.ss], [], [])
         while True:
             for sock in r_socks:
                 (conn, (self.host, self.port)) = self.ss.accept()
-                new_thread = ClientThread(self.host, self.port, conn)
+                new_thread = ClientThread(self.host, self.port, conn, self.thread_check)
                 new_thread.start()
 
                 if new_thread.id == None:
