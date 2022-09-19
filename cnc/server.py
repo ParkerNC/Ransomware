@@ -9,6 +9,9 @@ import os
 
 
 class ClientThread(Thread):
+    """
+    Client thread class, responsible for making connection to clients and sending them thier key
+    """
 
     def __init__(self, host: str, port: int, conn: socket, tu) -> None:
         Thread.__init__(self)
@@ -19,6 +22,10 @@ class ClientThread(Thread):
         self.thread_update = tu
 
     def run(self) -> None:
+        """
+        Run function:
+        recieves the connection and then runs Servers thread_check function to properly update our database
+        """
         while True:
             
             data = self.conn.recv(2048)
@@ -34,7 +41,13 @@ class ClientThread(Thread):
 
 
 class Server():
+    """
+    Server Class, manages user files and connections
+    """
     def __init__(self, host: str, port: int) -> None:
+        """
+        Mainly socket setup in the initialzer
+        """
         self.ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.ss.bind((host, port))
@@ -45,12 +58,18 @@ class Server():
         self.inp = ''
 
     def keyGen(self, id: str) -> bytes:
+        """
+        Generate key and save it to file named after client id
+        """
         key = Fernet.generate_key()
         with open(os.path.join("Users", id), 'wb') as gotUser:
             gotUser.write(key)
         return key
 
     def thread_check(self, new_thread: ClientThread, userId: str) -> None:
+        """
+        check if new user exists in our database, other wise add them to it and send a key
+        """
         print(userId)
 
         if userId in self.threads:
@@ -61,6 +80,9 @@ class Server():
         self.threads[userId] = new_thread
     
     def start(self) -> None:
+        """
+        wait for connections
+        """
         r_socks, w_socks, e_socks = select.select([self.ss], [], [])
         while True:
             for sock in r_socks:
@@ -69,9 +91,17 @@ class Server():
                 new_thread.start()
             
     def sig_dec(self, key: str, user: ClientThread) -> None:
+        """
+        Send user key for decyrption
+        """
         user.conn.send(bytes(key, "Utf-8"))
 
     def inputThread(self) -> str:
+        """
+        input loop to manage decryption
+        use - type: decrypt and the name of the user file
+        """
+        
         while 1:
             self.inp = input(">: ")
             print(self.inp)
@@ -92,6 +122,10 @@ class Server():
                     self.sig_dec(key, self.threads[user])
 
     def inputLoop(self) -> None:
+        """
+        Main code for the server,
+        starts the input loop and runs the client connection loop
+        """
         
         inputThread = Thread(target=self.inputThread)
         inputThread.start()
