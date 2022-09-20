@@ -56,6 +56,7 @@ class Server():
         self.port = port
         self.threads = {}
         self.inp = ''
+        
 
     def keyGen(self, id: str) -> bytes:
         """
@@ -71,9 +72,11 @@ class Server():
         check if new user exists in our database, other wise add them to it and send a key
         """
         print(userId)
+        print("knowns users: ", self.threads.keys())
 
         if userId in self.threads:
             new_thread.conn.send(b"wait")
+            self.threads[userId] = new_thread
             return
         
         new_thread.conn.send(self.keyGen(userId))
