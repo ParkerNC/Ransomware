@@ -5,8 +5,6 @@ import socket, select
 import sys
 from threading import Thread
 from cryptography.fernet import Fernet
-import os
-
 
 class ClientThread(Thread):
     """
