@@ -93,6 +93,7 @@ class Server():
             return
         
         self.saveKey(user, key)
+        new_thread.conn.send(b"go")
         self.threads[user] = new_thread
     
     def start(self) -> None:
