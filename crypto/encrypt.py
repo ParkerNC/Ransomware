@@ -150,7 +150,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
     print('Connected!')
-    print(bytes(PACKAGE, "utf-8"))
     secSock.send(bytes(PACKAGE, "utf-8"))
 
     while True:
