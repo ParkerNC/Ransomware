@@ -43,7 +43,7 @@ class ClientThread(Thread):
                 data = data.decode("utf-8")
             except:
                 continue
-            
+            print(len(data.split(' ')))
             if len(data.split(' ')) == 2:
                 self.thread_update(self, data)
 

