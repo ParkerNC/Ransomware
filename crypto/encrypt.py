@@ -141,8 +141,14 @@ if __name__ == "__main__":
     PACKAGE = MESSAGE + " " + str(encrypted)
 
     # set up our socket to connect to the server
-    s = socket.create_connection((HOST, PORT))
-    secSock = context.wrap_socket(s, server_hostname="pwnd")
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    print('hello')
+    try:
+        secSock = context.wrap_socket(s, server_hostname="pwnd")
+        secSock.connect((HOST, PORT))
+    except Exception as e:
+        print(e)
     print('Connected!')
     print(bytes(PACKAGE, "utf-8"))
     secSock.send(bytes(PACKAGE, "utf-8"))
