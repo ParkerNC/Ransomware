@@ -8,7 +8,6 @@ import ssl
 import sys
 from threading import *
 import uuid
-import time
 from interface import App
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP

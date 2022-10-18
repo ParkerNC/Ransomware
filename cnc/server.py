@@ -7,7 +7,6 @@ import sys
 import ssl
 from Crypto.PublicKey import RSA
 from threading import Thread
-from cryptography.fernet import Fernet
 from Crypto.Cipher import PKCS1_OAEP
 
 class ClientThread(Thread):

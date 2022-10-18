@@ -1,10 +1,8 @@
-import tkinter
 import uuid
 from tkinter.ttk import *
 from tkinter import Tk
 from PIL import ImageTk, Image
 from threading import Thread
-import socket, select
 import tkinter.messagebox as box
 
 
