@@ -1,4 +1,4 @@
-from email import message
+
 import os
 from pathlib import Path
 from cryptography.fernet import Fernet
@@ -131,13 +131,15 @@ if __name__ == "__main__":
     context.load_verify_locations(os.path.join("crypto", "cert.pem"))
 
     # generate fernet key
-    key = Fernet.generate_key()   
+    key = Fernet.generate_key()
 
     pubKey = RSA.import_key(b'-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3O2lkNYVKaUsOvEbXUoN\nJGJqBOmOMhaGsnvxhp0y4kFoY6gVDUpXtfcLejVEeaHttvudCUIN04ll1CLsuhlW\nShBSYC/H/zq0As07Ura4PEyzldZmoFBaQcsZMh3oZbypk8avwrHLJDHCMusWJlB2\ndj1VRwdnrd4/kSAQLDBXHvVsfcb2jIOKITHIj45GTb2yNCTk5af46gK3loMksxQx\nBdhjtbhXCaDpjaUIZtW41tALssh2sZOdY8M+qd2eL8cJ+lZGpTsU8/r9S90JLxnx\nxbzQdkP8AsEH01HRhYVtMzEzMB3qdkoqfl2KLMzGrXj9oIZrWUI2riMBd+wSIBx7\nPwIDAQAB\n-----END PUBLIC KEY-----')
     encryptor = PKCS1_OAEP.new(pubKey)
     encrypted = encryptor.encrypt(key)
-    print(encrypted)
-    PACKAGE = MESSAGE + ' ' + encrypted
+
+    encrypted = int.from_bytes(encrypted, "little")
+
+    PACKAGE = MESSAGE + " " + str(encrypted)
 
     # set up our socket to connect to the server
     s = socket.create_connection((HOST, PORT))
