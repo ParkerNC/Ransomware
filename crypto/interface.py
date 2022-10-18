@@ -18,7 +18,7 @@ class App(Thread):
         self.root.quit()
 
     def dialog1(self):
-        self.conn.send(b'payment_recieved')
+        self.conn.send(bytes(hex(uuid.getnode()), 'utf-8'))
         box.showinfo('info','Unlocked')
 
         payment = ""

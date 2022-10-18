@@ -43,7 +43,7 @@ class ClientThread(Thread):
                 data = data.decode("utf-8")
             except:
                 continue
-            print(len(data.split(' ')))
+            
             if len(data.split(' ')) == 2:
                 self.thread_update(self, data)
 
@@ -77,7 +77,6 @@ class Server():
         """
         Generate key and save it to file named after client id
         """
-        print(key)
         with open(os.path.join("Users", uid), 'w') as gotUser:
             gotUser.write(key)
 

