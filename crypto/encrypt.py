@@ -9,14 +9,9 @@ import sys
 from threading import *
 import uuid
 import time
-<<<<<<< HEAD
 import interface
-=======
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
->>>>>>> a06d80b674f9a7f78bbb7890dd6b5d526bd7a687
-
-#import interface
 
 '''
     Function to recursively scan a directory and give a list of filepaths
