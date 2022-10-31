@@ -5,5 +5,5 @@ function SwitchPage(){
     document.getElementById("checkbutton").style.marginLeft = "2%"
     setTimeout(function(){
         window.location.href = './msoffice.html';
-     }, 3000);
+     }, 3500);
 }
