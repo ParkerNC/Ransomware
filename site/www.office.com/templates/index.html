@@ -1,0 +1,16 @@
+
+<!DOCTYPE html>
+<html>
+<head> 
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+</head>
+
+<body>
+    <script src="{{url_for('static', filename='script.js')}}"> </script>
+    <div id="popup" class="popup">
+        <img id="captcha" src="{{url_for('static', filename='Captcha.png')}}" onclick="SwitchPage()">
+        <img src="{{url_for('static', filename='gifcheck.gif')}}" id="checkbutton">
+    </div>
+    
+</body>
+</html>
