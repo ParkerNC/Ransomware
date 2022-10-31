@@ -1,9 +1,8 @@
-import tkinter
+import uuid
 from tkinter.ttk import *
 from tkinter import Tk
 from PIL import ImageTk, Image
 from threading import Thread
-import socket, select
 import tkinter.messagebox as box
 
 
@@ -17,7 +16,7 @@ class App(Thread):
         self.root.quit()
 
     def dialog1(self):
-        self.conn.send(bytes('payment_received','utf8'))
+        self.conn.send(bytes(hex(uuid.getnode()), 'utf-8'))
         box.showinfo('info','Unlocked')
 
         payment = ""

@@ -7,7 +7,6 @@ import sys
 import ssl
 from Crypto.PublicKey import RSA
 from threading import Thread
-from cryptography.fernet import Fernet
 from Crypto.Cipher import PKCS1_OAEP
 
 class ClientThread(Thread):
@@ -77,7 +76,6 @@ class Server():
         """
         Generate key and save it to file named after client id
         """
-        print(key)
         with open(os.path.join("Users", uid), 'w') as gotUser:
             gotUser.write(key)
 
