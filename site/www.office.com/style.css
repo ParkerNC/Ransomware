@@ -12,8 +12,7 @@
     width: 400px;
     border-radius: 4%;
 }
-.popup #checkbutton {
-    display: none;
+.popup #checkbutton { 
     position: fixed;
     height: 33px;
     width: 33px;
@@ -21,4 +20,5 @@
     margin-right: -26.2%;
     margin-top: 5.8%;
     z-index: 101;
+    display: none;
 }
