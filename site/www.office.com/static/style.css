@@ -11,6 +11,7 @@
 .popup #captcha {
     width: 400px;
     border-radius: 4%;
+    position: relative;
 }
 .popup #checkbutton { 
     position: fixed;
