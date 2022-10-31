@@ -1,0 +1,24 @@
+.popup {
+    width: 400px;
+    margin-left: 35%;
+    margin-right: 65%;
+    
+    border-radius: 4%;
+    margin-top: 20%;
+    position: fixed;
+    z-index: 100;
+}
+.popup #captcha {
+    width: 400px;
+    border-radius: 4%;
+}
+.popup #checkbutton {
+    display: none;
+    position: fixed;
+    height: 33px;
+    width: 33px;
+    margin-left: -24.2%;
+    margin-right: -26.2%;
+    margin-top: 5.8%;
+    z-index: 101;
+}
